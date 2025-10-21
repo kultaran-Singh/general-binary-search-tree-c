@@ -51,6 +51,7 @@ void bst_insert(Tree* tree, void* data){
         return;
     }
     //bst_insert_rec(tree, tree->root, data);
+    tree->size++;
     return;
 }
 
@@ -84,6 +85,10 @@ int bst_is_valid(Tree* tree){
     int* checkPointer = &checker;
     bst_traverse_inorder(tree, bst_validate_node, checkPointer);
     return *checkPointer;
+}
+
+size_t bst_size(Tree* tree){
+    return tree->size;
 }
 //Helper Functions
 void* get_data(Node* node){
