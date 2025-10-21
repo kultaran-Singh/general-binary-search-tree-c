@@ -17,15 +17,15 @@ void* bst_search(Tree* tree, void* data);
 
 //Traversal Functions
 void bst_traverse_inorder(Tree* tree, 
-                          void (*op)(void* data, void* context), 
+                          void (*op)(Node* node, void* context), 
                           void* context);
 
 void bst_traverse_preorder(Tree* tree, 
-                           void (*op)(void* data, void* context), 
+                           void (*op)(Node* node, void* context), 
                            void* context);
 
 void bst_traverse_postorder(Tree* tree,
-                            void (*op)(void* data, void* context),
+                            void (*op)(Node* node, void* context),
                             void* context);
 
 //Utility Functions
@@ -38,22 +38,23 @@ int bst_is_valid(Tree* tree);
 
 //Helper Functions 
 void* get_data(Node* node); //Returns the data of the node
-void bst_validate_node(void* node, void* check); //Checks if the current node is balanced
-void node_print_int(void* node, void* context); 
+void bst_validate_node(Node* node, void* check); //Checks if the current node is balanced
+void node_print_int(Node* node, void* context); 
+Node* node_create(void* data);
 
 //Recursion Helpers
 void bst_traverse_inorder_rec(Node* current_node, 
-                              void (*op)(void* data, void* context), 
+                              void (*op)(Node* node, void* context), 
                               void* context);
 
 void bst_traverse_preorder_rec(Node* current_node, 
-                               void (*op)(void* data, void* context), 
+                               void (*op)(Node* node, void* context), 
                                void* context);
 
 void bst_traverse_postorder_rec(Node* current_node,
-                                void (*op)(void* data, void* context), 
+                                void (*op)(Node* node, void* context), 
                                 void* context);
 
-int bst_insert_rec(Tree* tree, Node* current_node, void* data);
+void bst_insert_rec(Tree* tree, Node* current_node, Node* new_node);
 
 #endif
