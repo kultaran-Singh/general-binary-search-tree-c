@@ -50,7 +50,7 @@ void bst_insert(Tree* tree, void* data){
         tree->root->right = NULL;
         return;
     }
-    bst_insert_rec(tree, tree->root, data);
+    //bst_insert_rec(tree, tree->root, data);
     return;
 }
 
@@ -70,23 +70,51 @@ void bst_traverse_postorder(Tree* tree, void (*op)(void* data, void* context), v
     return;
 }
 
-//Helper Functions
-void* get_data(Node* node){
-    return node->data;
-}
-
+//Utility Functions
 void bst_print(Tree* tree){
     bst_traverse_inorder(tree, node_print_int, NULL);
     return;
 }
 
-int bst_isBalanced(Tree* tree){
+int bst_is_valid(Tree* tree){
+    if(tree == NULL){
+        return 2;
+    }
+    int checker = 0;
+    int* checkPointer = &checker;
+    bst_traverse_inorder(tree, bst_validate_node, checkPointer);
+    return *checkPointer;
+}
+//Helper Functions
+void* get_data(Node* node){
+    return node->data;
+}
 
+void bst_validate_node(void* node, void* checkPointer){
+    //If current node is balanced then returns 0, else returns 1
+    if(node == NULL || checkPointer == NULL){
+        printf("Invalid check");
+        return;
+    }
+    Node* current_node = (Node*)node;
+    int* checker = (int*)checkPointer;
+
+    if(current_node->left != NULL && current_node->left->data >= current_node->data){
+        *checker = 1;
+        return;
+    }
+    if(current_node->right != NULL && current_node->right->data <= current_node->data){
+        *checker = 1;
+        return;
+    }
+    else{
+        return;
+    }
 }
 
 //Recursion Helpers
 void bst_traverse_inorder_rec(Node* current_node, void (*op)(void* data, void* context), void* context){
-
+    
     if(current_node == NULL || op == NULL)
         return;
     //Visit Left node
@@ -146,10 +174,10 @@ void bst_traverse_postorder_rec(Node* current_node, void (*op)(void* data, void*
     return;
 }
 
-int bst_insert_rec(Tree* tree, Node* current_node, void* insertData){
+/*int bst_insert_rec(Tree* tree, Node* current_node, void* insertData){
     
     if(current_node->left == NULL && current_node->right == NULL){
-        result_current = tree->compareNode(insertData, current_node->data)
+        int* result_current = tree->compareNode(insertData, current_node->data);
     }
     void* left_node_value    = current_node->left->data;
     void* right_node_value   = current_node->right->data;
@@ -180,7 +208,7 @@ int bst_insert_rec(Tree* tree, Node* current_node, void* insertData){
             break;
     }
     return 0;
-}
+}*/
 //DEMO
 void node_print_int(void* node, void* context){
     Node* n = (Node*)node;
