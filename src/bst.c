@@ -83,7 +83,26 @@ void bst_print(Tree* tree){
     printf("Postorder:\n");
     bst_traverse_postorder(tree, node_print_int, NULL);
     printf("--------------\n");
+    printf("Minimum: ");
+    node_print_int(bst_get_min(tree), NULL);
+    printf("Maximum: ");
+    node_print_int(bst_get_max(tree), NULL);
     return;
+}
+
+void* bst_get_min(Tree* tree){
+    //Returns the node all the way to the left
+    Node* current_node = tree->root;
+    while(current_node->left != NULL)
+        current_node = current_node->left;
+    return current_node;
+}
+void* bst_get_max(Tree* tree){
+    //Returns the node all the way to the right
+    Node* current_node = tree->root;
+    while(current_node->right != NULL)
+        current_node = current_node->right;
+    return current_node;
 }
 
 int bst_is_valid(Tree* tree){
