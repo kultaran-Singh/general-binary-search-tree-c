@@ -6,14 +6,14 @@ typedef struct Tree Tree;
 
 //Lifecycle Functions
 Tree* bst_create(void (*freeNode)(void* Node),
-                  int (*compareNode)(Node* node1, Node* node2));
+                  int (*compareNode)(void* node_data_1, void* node_data_2));
 
 void bst_destroy(Tree* tree);
 
 //Core Functions
 void bst_insert(Tree* tree, void* data);
 void bst_remove(Tree* tree, void* data);
-void* bst_search(Tree* tree, void* data);
+Node* bst_search(Tree* tree, void* data);
 
 //Traversal Functions
 void bst_traverse_inorder(Tree* tree, 
@@ -56,5 +56,6 @@ void bst_traverse_postorder_rec(Node* current_node,
                                 void* context);
 
 void bst_insert_rec(Tree* tree, Node* current_node, Node* new_node);
+Node* bst_search_rec(Tree*tree, Node* current_node, void* data);
 
 #endif

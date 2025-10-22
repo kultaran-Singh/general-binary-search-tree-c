@@ -12,14 +12,14 @@ typedef struct Node{
 
 typedef struct Tree{
     Node*  root;
-    size_t size;                                       //Number of nodes
-    void   (*freeNode)(void* Node);                    //Function to free a node
-    int    (*compareNode)(Node* node1, Node* node2);   //Function to compare two nodes
+    size_t size;                                                   //Number of nodes
+    void   (*freeNode)(void* Node);                                //Function to free a node
+    int    (*compareNode)(void* node_data_1, void* node_data_2);   //Function to compare two nodes
 }Tree;
 
 //Lifecycle Functions
 Tree* bst_create(void (*freeNode)(void* Node),
-                 int (*compareNode)(Node* node1, Node* node2)){
+                 int (*compareNode)(void* node_data_1, void* node_data_2)){
 
     Tree* tree = (Tree*)malloc(sizeof(Tree*));
 
@@ -38,7 +38,9 @@ void bst_destroy(Tree* tree){
 }
 //Core Functions
 void bst_insert(Tree* tree, void* data){
-    
+    if(tree == NULL || data == NULL){
+        return;
+    }
     //If the tree is empty
     Node* new_node = node_create(data);
     if(tree->root->data == NULL){
@@ -46,7 +48,7 @@ void bst_insert(Tree* tree, void* data){
         tree->size++;
         return;
     }
-    if((tree->compareNode(tree->root, new_node) == 1)){
+    if((tree->compareNode(tree->root->data, new_node->data) == 1)){
         printf("Node Already Exists");
         return;
     }
@@ -56,6 +58,13 @@ void bst_insert(Tree* tree, void* data){
     return;
 }
 
+Node* bst_search(Tree* tree, void* data){
+    if(tree == NULL || data == NULL || tree->root == NULL){
+        return NULL;
+    }
+    Node* result = bst_search_rec(tree, tree->root, data);
+    return result;
+}
 //Traversal Functions
 void bst_traverse_inorder(Tree* tree, void (*op)(Node* data, void* context), void* context){
     bst_traverse_inorder_rec(tree->root, op, context);
@@ -87,6 +96,7 @@ void bst_print(Tree* tree){
     node_print_int(bst_get_min(tree), NULL);
     printf("Maximum: ");
     node_print_int(bst_get_max(tree), NULL);
+    printf("Tree Size: %lu\n", bst_size(tree));
     return;
 }
 
@@ -106,6 +116,7 @@ void* bst_get_max(Tree* tree){
 }
 
 int bst_is_valid(Tree* tree){
+    //Checks if the tree satisfies the bst property
     if(tree == NULL){
         return 2;
     }
@@ -116,6 +127,7 @@ int bst_is_valid(Tree* tree){
 }
 
 size_t bst_size(Tree* tree){
+    //Returns the number of nodes in the tree
     return tree->size;
 }
 //Helper Functions
@@ -143,6 +155,14 @@ void bst_validate_node(Node* node, void* checkPointer){
     else{
         return;
     }
+}
+
+Node* node_create(void* data){
+    Node* new_node = calloc(1, sizeof(Node*));
+    new_node->data = data;
+    new_node->left = NULL;
+    new_node->right = NULL;
+    return new_node;
 }
 
 //Recursion Helpers
@@ -203,7 +223,7 @@ void bst_traverse_postorder_rec(Node* current_node, void (*op)(Node* node, void*
 
 void bst_insert_rec(Tree* tree, Node* current_node, Node* new_node){
     
-    int result = tree->compareNode(new_node, current_node);
+    int result = tree->compareNode(new_node->data, current_node->data);
     
     switch(result){
         case 1: //Equivalent Node Found
@@ -230,12 +250,24 @@ void bst_insert_rec(Tree* tree, Node* current_node, Node* new_node){
     return;
 }
 
-Node* node_create(void* data){
-    Node* new_node = calloc(1, sizeof(Node*));
-    new_node->data = data;
-    new_node->left = NULL;
-    new_node->right = NULL;
-    return new_node;
+Node* bst_search_rec(Tree* tree, Node* current_node, void* data){
+    if(current_node == NULL){
+        return NULL;
+    }
+    Node* result;
+    int comparison = tree->compareNode(data, current_node->data);
+    switch(comparison){
+        case 1: //Current_node->data == data
+            result = current_node;
+            break;
+        case 2: //Current_node->data < data
+            result = bst_search_rec(tree, current_node->right, data);
+            break;
+        case 3: //Current_node->data > data
+            result = bst_search_rec(tree, current_node->left, data);
+            break;
+    }
+    return result;
 }
 //DEMO
 void node_print_int(Node* node, void* context){
